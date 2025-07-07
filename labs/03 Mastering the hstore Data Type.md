@@ -77,7 +77,7 @@ Insert sample attribute data for a few Northwind products into the `ProductAttri
 
 ```sql
 INSERT INTO ProductAttributes (product_id, attributes) VALUES
-    (1, 'caffeine_level=>high, packaging=>tea bags'),
+    (1, 'caffeine_level=>high, packaging=>tea_bags'),
     (4, 'spice_level=>hot, allergens=>celery'),
     (11, 'cheese_type=>blue, region_of_origin=>Asturias');
 
