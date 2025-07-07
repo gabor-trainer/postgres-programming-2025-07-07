@@ -1,6 +1,9 @@
 # Installing the Northwind database
 
-First, ensure you have saved the provided Northwind SQL script to a known location on your computer, e.g., `C:\northwind.sql`.
+First, ensure you have saved the provided Northwind SQL script to a known location on your computer, e.g., `C:\northwind.
+sql`.
+
+...or... download it from the [Northwind GitHub repository](https://raw.githubusercontent.com/pthom/northwind_psql/refs/heads/master/northwind.sql)
 
 ---
 
