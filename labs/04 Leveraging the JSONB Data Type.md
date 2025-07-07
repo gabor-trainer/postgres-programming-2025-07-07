@@ -315,12 +315,12 @@ WHERE
 -- 2. For log_id 1, list all 'agent' names from its events
 SELECT
     log_id,
-    jsonb_each_text(event_obj) -> 'agent' AS agent_name
+    event_obj ->> 'agent' AS agent_name -- Directly extract 'agent' from event_obj
 FROM
     CustomerInteractionLog,
-    jsonb_array_elements(events) AS event_obj
+    jsonb_array_elements(events) AS event_obj -- event_obj is already a JSONB object
 WHERE
-    log_id = 1 AND jsonb_each_text(event_obj) ? 'agent'; -- Iterate array and extract key from object
+    log_id = 1 AND event_obj ? 'agent'; -- Check if the 'agent' key exists within the current event_obj
 
 -- 3. Find log entries where an event contains {"issue": "Payment Error"}
 SELECT
