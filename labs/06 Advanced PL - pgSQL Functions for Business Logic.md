@@ -39,7 +39,7 @@ We will also create a temporary helper table named `InventoryTransactionLog` to 
 Create a PL/pgSQL function named `get_full_order_value` that calculates the *total value* of a specific order. This total value should include the sum of all discounted line items from `order_details` *plus* the `freight` cost from the `orders` table.
 
 The function should:
-1.  Take `p_order_id` (smallint) as input.
+1.  Take `p_order_id` (integer) as input.
 2.  Declare a local variable for `line_item_total` (real) and `total_order_value` (real).
 3.  Calculate the sum of `(unit_price * quantity * (1 - discount))` for all items in the given order.
 4.  Add the `freight` cost for that order to the calculated sum.
@@ -48,7 +48,7 @@ The function should:
 **SQL Query:**
 
 ```sql
-CREATE OR REPLACE FUNCTION get_full_order_value(p_order_id smallint)
+CREATE OR REPLACE FUNCTION get_full_order_value(p_order_id integer)
 RETURNS real AS $$
 DECLARE
     line_item_total real;
@@ -124,7 +124,7 @@ DECLARE
     customer_total_spending real;
     order_cursor CURSOR FOR
         SELECT order_id FROM orders WHERE customer_id = p_customer_id;
-    current_order_id smallint;
+    current_order_id integer;
 BEGIN
     customer_total_spending := 0.0; -- Initialize to 0.0
 
@@ -180,7 +180,7 @@ Create a PL/pgSQL function named `get_low_stock_products_with_supplier` that ide
 
 The function should:
 1.  Take no parameters.
-2.  Return a `TABLE` (or `SETOF RECORD`) with columns: `product_name` (character varying), `units_in_stock` (smallint), `reorder_level` (smallint), and `supplier_company_name` (character varying).
+2.  Return a `TABLE` (or `SETOF RECORD`) with columns: `product_name` (character varying), `units_in_stock` (integer), `reorder_level` (integer), and `supplier_company_name` (character varying).
 3.  Iterate through all products that have `units_in_stock` less than or equal to their `reorder_level` AND `reorder_level` is greater than 0.
 4.  For each such product, retrieve its name, current stock, reorder level, and the `company_name` of its supplier.
 5.  Use `RETURN NEXT` to add each matching product's details to the result set.
@@ -191,8 +191,8 @@ The function should:
 CREATE OR REPLACE FUNCTION get_low_stock_products_with_supplier()
 RETURNS TABLE (
     product_name character varying,
-    units_in_stock smallint,
-    reorder_level smallint,
+    units_in_stock integer,
+    reorder_level integer,
     supplier_company_name character varying
 ) AS $$
 DECLARE
@@ -243,7 +243,7 @@ Create a robust PL/pgSQL function named `fulfill_order_line_item` that simulates
 First, create a temporary table `InventoryTransaction` to log all inventory changes.
 
 The function `fulfill_order_line_item` should:
-1.  Take `p_order_id` (smallint), `p_product_id` (smallint), and `p_quantity_to_fulfill` (smallint) as input.
+1.  Take `p_order_id` (integer), `p_product_id` (integer), and `p_quantity_to_fulfill` (integer) as input.
 2.  **Declare:** Variables for current stock, product details (name), and the quantity ordered from `order_details`.
 3.  **Validate Input:**
     *   Check if the `order_details` entry exists for the given `p_order_id` and `p_product_id`. If not, `RAISE EXCEPTION`.
@@ -263,22 +263,22 @@ The function `fulfill_order_line_item` should:
 DROP TABLE IF EXISTS InventoryTransaction CASCADE;
 CREATE TEMPORARY TABLE InventoryTransaction (
     transaction_id SERIAL PRIMARY KEY,
-    product_id SMALLINT,
+    product_id integer,
     transaction_date TIMESTAMP DEFAULT NOW(),
-    quantity_change SMALLINT,
+    quantity_change integer,
     description TEXT
 );
 
 -- 2. Create the function
 CREATE OR REPLACE FUNCTION fulfill_order_line_item(
-    p_order_id smallint,
-    p_product_id smallint,
-    p_quantity_to_fulfill smallint
+    p_order_id integer,
+    p_product_id integer,
+    p_quantity_to_fulfill integer
 )
 RETURNS text AS $$
 DECLARE
-    current_stock smallint;
-    ordered_quantity smallint;
+    current_stock integer;
+    ordered_quantity integer;
     product_name_val character varying(40);
 BEGIN
     -- Start a transaction block (implicitly handled by PL/pgSQL if not explicitly opened)
