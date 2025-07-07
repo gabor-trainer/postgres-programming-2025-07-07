@@ -209,7 +209,7 @@ WHERE
 UPDATE
     ProductAttributes
 SET
-    attributes = attributes - 'allergens'
+    attributes = delete(attributes, 'allergens')
 WHERE
     product_id = 4;
 
