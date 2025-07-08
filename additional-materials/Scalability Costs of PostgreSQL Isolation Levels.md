@@ -61,7 +61,7 @@
 ## Practical Recommendations
 
 * **Read Committed** is suitable for high-throughput, low-conflict OLTP workloads (e.g. logging, metrics ingestion).
-* **Repeatable Read** balances consistency and performance for most applications that need consistent reads within a transaction.
-* **Serializable** should be used when **true serializability is required**, such as in **financial systems** or **complex business rules**—but expect significantly reduced scalability in high concurrency.
+* **Repeatable Read** balances consistency and performance for most applications that need consistent reads within a transaction. Always validate the need for long-lived transactions.
+* **Serializable** should only be used when **true serializability is required**, such as in **financial systems** or **complex business rules**—but and always validate the need. Expect significantly reduced scalability in high concurrency.
 
 Let me know if you'd like benchmark data or tuning strategies to mitigate these costs.
