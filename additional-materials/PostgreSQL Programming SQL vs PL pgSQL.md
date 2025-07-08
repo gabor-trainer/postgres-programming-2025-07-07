@@ -118,7 +118,7 @@ TL;DR:
     *   You need to insert, update, or delete data for an entire set of rows (`INSERT`, `UPDATE`, `DELETE`).
     *   You are defining database objects (`CREATE TABLE`, `ALTER TABLE`, `CREATE VIEW`).
     *   Your logic can be expressed purely through set-based operations (joins, aggregations, subqueries).
-    *   Performance for large data sets is paramount, and the operation fits within a single SQL statement.
+    *   Performance for large data sets is important, and the operation fits within a single SQL statement.
 
 *   **Use PL/pgSQL (within functions, procedures, or triggers) when:**
     *   You need to implement complex business logic that requires conditional branching (`IF`/`CASE`).
