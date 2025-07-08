@@ -245,6 +245,12 @@ When a procedure is called:
 *   If it is called **outside** an existing transaction block, the `CALL` statement itself will initiate an implicit transaction. Any `COMMIT` or `ROLLBACK` within the procedure will then operate on this implicit transaction.
 *   If it is called **inside** an explicit transaction block (e.g., after `BEGIN;` or `START TRANSACTION;`), then any `COMMIT` or `ROLLBACK` within the procedure will operate on the *caller's transaction*, potentially committing or rolling back the work done *before* the procedure was called, as well as the work within the procedure. This is powerful but requires extreme caution.
 
+### `BEGIN;`
+
+Starts a new transaction block. This is often used at the beginning of a procedure to ensure that all operations within the procedure are treated as a single atomic unit.
+
+```sql
+
 ### `COMMIT;`
 
 Ends the current transaction, making all changes permanent. If the procedure was called within a larger transaction, `COMMIT;` will commit that entire parent transaction.
