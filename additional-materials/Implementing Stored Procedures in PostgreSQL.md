@@ -249,7 +249,6 @@ When a procedure is called:
 
 Starts a new transaction block. This is often used at the beginning of a procedure to ensure that all operations within the procedure are treated as a single atomic unit.
 
-```sql
 
 ### `COMMIT;`
 
