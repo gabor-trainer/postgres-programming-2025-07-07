@@ -49,19 +49,21 @@ ON DELETE TO categories
 WHERE OLD.category_id = 1 -- OLD refers to the row being deleted
 DO INSTEAD NOTHING;
 
--- Test Case 1: Try to delete 'Beverages' (should fail silently)
+-- Test Case 1: Try to delete 'Beverages' (should fail silently, pay attenstion to message 'DELETE 0')
 DELETE FROM categories WHERE category_id = 1;
 
--- Test Case 2: Try to delete 'Condiments' (Category ID 2) (should succeed)
-DELETE FROM categories WHERE category_id = 2; -- This will remove Condiments temporarily. Remember to re-insert if you need it later.
+-- Test Case 2: Try to delete 'Condiments' (Category ID 2) (should succeed, pay attenstion to message 'DELETE 1')
+INSERT INTO categories (category_id, category_name, description, picture)
+VALUES (100, 'Condiments2', 'Sweet and savory sauces, relishes, spreads, and seasonings2', '\x')
+ON CONFLICT (category_id) DO NOTHING;
+
+DELETE FROM categories WHERE category_id = 100; -- This will remove Condiments temporarily. Remember to re-insert if you need it later.
 
 -- Verify categories table content
 SELECT * FROM categories ORDER BY category_id;
 
 -- Clean up (optional, but good for idempotent testing): Re-insert Condiments if it was deleted
-INSERT INTO categories (category_id, category_name, description, picture)
-VALUES (2, 'Condiments', 'Sweet and savory sauces, relishes, spreads, and seasonings', '\x')
-ON CONFLICT (category_id) DO NOTHING;
+
 ```
 
 **Expected Output/Explanation:**
