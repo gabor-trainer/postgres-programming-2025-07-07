@@ -1,6 +1,6 @@
 # Implementing Stored Procedures in PostgreSQL
 
-## 8.1 Introduction to Stored Procedures
+## Introduction to Stored Procedures
 
 Stored procedures are powerful constructs that allow you to encapsulate complex business logic directly within the database server. They are pre-compiled collections of SQL and procedural statements (written in languages like PL/pgSQL) that can be executed on demand. Stored procedures act as an essential layer for creating robust, secure, and efficient database applications.
 
@@ -34,7 +34,7 @@ While both PostgreSQL functions and procedures (as introduced in PG 11+) allow y
 
 This chapter will focus on these unique capabilities of PostgreSQL stored procedures, particularly their transaction management features, through practical Northwind database examples.
 
-## 8.2 Enabling PL/pgSQL
+## Enabling PL/pgSQL
 
 PostgreSQL procedures are primarily written in PL/pgSQL, PostgreSQL's native procedural language. While PL/pgSQL is usually enabled by default in a standard PostgreSQL installation, it's good practice to ensure it's available.
 
@@ -46,7 +46,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql;
 
 If you ever encounter errors related to `language "plpgsql" does not exist`, running the above command (as a superuser) will fix it.
 
-## 8.3 Basic Procedure Syntax
+## Basic Procedure Syntax
 
 The general structure for defining a stored procedure in PostgreSQL is as follows:
 
@@ -102,7 +102,7 @@ END;
 $$;
 ```
 
-## 8.4 Calling Procedures
+## Calling Procedures
 
 Unlike functions, which are called using `SELECT`, stored procedures are executed using the `CALL` statement.
 
@@ -157,11 +157,11 @@ $$;
 -- NOTICE:  Customer NONEXIST Contact: Customer Not Found Phone: N/A
 ```
 
-## 8.5 Core Concepts in PL/pgSQL Procedures
+## Core Concepts in PL/pgSQL Procedures
 
 Procedures leverage the full power of PL/pgSQL, allowing for sophisticated logic.
 
-### 8.5.1 Variable Declarations
+### Variable Declarations
 
 Variables are defined in the `DECLARE` block.
 
@@ -173,7 +173,7 @@ DECLARE
     order_cursor CURSOR FOR SELECT order_id, order_date FROM orders WHERE customer_id = 'VINET'; -- Cursor declaration
 ```
 
-### 8.5.2 Control Structures
+### Control Structures
 
 PL/pgSQL provides standard programming control structures.
 
@@ -212,7 +212,7 @@ PL/pgSQL provides standard programming control structures.
     END LOOP;
     ```
 
-### 8.5.3 Error Handling (`EXCEPTION` Block)
+### Error Handling (`EXCEPTION` Block)
 
 Procedures can catch and handle errors that occur during their execution.
 
@@ -237,7 +237,7 @@ END;
 *   `SQLSTATE`: A 5-character code indicating the specific error type (e.g., `23505` for `unique_violation`).
 *   `SQLERRM`: The human-readable error message.
 
-## 8.6 Explicit Transaction Management in Procedures
+## Explicit Transaction Management in Procedures
 
 This is the most crucial aspect that distinguishes PostgreSQL procedures from functions. A procedure can explicitly use `COMMIT`, `ROLLBACK`, and `SAVEPOINT` statements within its body.
 
@@ -245,33 +245,33 @@ When a procedure is called:
 *   If it is called **outside** an existing transaction block, the `CALL` statement itself will initiate an implicit transaction. Any `COMMIT` or `ROLLBACK` within the procedure will then operate on this implicit transaction.
 *   If it is called **inside** an explicit transaction block (e.g., after `BEGIN;` or `START TRANSACTION;`), then any `COMMIT` or `ROLLBACK` within the procedure will operate on the *caller's transaction*, potentially committing or rolling back the work done *before* the procedure was called, as well as the work within the procedure. This is powerful but requires extreme caution.
 
-### 8.6.1 `COMMIT;`
+### `COMMIT;`
 
 Ends the current transaction, making all changes permanent. If the procedure was called within a larger transaction, `COMMIT;` will commit that entire parent transaction.
 
-### 8.6.2 `ROLLBACK;`
+### `ROLLBACK;`
 
 Aborts the current transaction, undoing all changes since the transaction started (or since the last `COMMIT`). Similar to `COMMIT;`, `ROLLBACK;` will roll back the entire parent transaction if the procedure was called within one.
 
-### 8.6.3 `SAVEPOINT savepoint_name;`
+### `SAVEPOINT savepoint_name;`
 
 Sets a savepoint within the current transaction. This allows you to roll back to a specific point within the transaction without abandoning the entire transaction.
 
-### 8.6.4 `ROLLBACK TO SAVEPOINT savepoint_name;`
+### `ROLLBACK TO SAVEPOINT savepoint_name;`
 
 Undoes all changes made since the specified savepoint was set, but the transaction remains active.
 
-### 8.6.5 `RELEASE SAVEPOINT savepoint_name;`
+### `RELEASE SAVEPOINT savepoint_name;`
 
 Removes a savepoint, keeping all changes made since that savepoint (unless a later `ROLLBACK` or `ROLLBACK TO SAVEPOINT` affects them).
 
 **Crucial Warning:** Using `COMMIT` or `ROLLBACK` inside a procedure when it's part of a larger, explicit transaction can lead to unexpected behavior for the caller, as it will commit/rollback the caller's transaction. It's generally recommended to only use `COMMIT`/`ROLLBACK` inside a procedure if the procedure is explicitly designed to be the sole transactional unit, or if it's called as a top-level command. For most nested scenarios, using `SAVEPOINT`s might be safer if partial rollbacks are needed.
 
-## 8.7 Real-World Northwind Examples
+## Real-World Northwind Examples
 
 Let's apply these concepts to typical Northwind business scenarios.
 
-### 8.7.1 Example 1: `UPDATE` and Audit Customer Contact
+### Example 1: `UPDATE` and Audit Customer Contact
 
 **Scenario:** A customer's contact information (phone and fax) is updated. This operation should be audited by logging the old and new values.
 
@@ -361,7 +361,7 @@ UPDATE customers SET phone = '030-0074321', fax = '030-0076545' WHERE customer_i
 DELETE FROM CustomerContactAudit WHERE customer_id = 'ALFKI';
 ```
 
-### 8.7.2 Example 2: Complex Order Fulfillment with Explicit Transaction Control
+### Example 2: Complex Order Fulfillment with Explicit Transaction Control
 
 **Scenario:** Process a new order received from a customer. This involves several steps:
 1.  Validate that the product exists and has sufficient stock.
@@ -550,7 +550,7 @@ CALL process_new_order(
 SELECT count(*) FROM orders WHERE customer_id = 'ALFKI' AND order_date = '1997-08-02'::DATE; -- Should be 0
 ```
 
-## 8.8 Stored Procedures vs. Functions Revisited (Detailed Comparison)
+## Stored Procedures vs. Functions Revisited (Detailed Comparison)
 
 | Feature                   | PostgreSQL **Function** (`CREATE FUNCTION`)                                                                              | PostgreSQL **Procedure** (`CREATE PROCEDURE`)                                                                                |
 | :------------------------ | :----------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
@@ -566,7 +566,7 @@ SELECT count(*) FROM orders WHERE customer_id = 'ALFKI' AND order_date = '1997-0
 
 The choice between a function and a procedure boils down to whether you need to manage transactions explicitly within the routine and whether the routine's primary purpose is to return data or to perform an action. For true transactional control and complex DML workflows, procedures are the appropriate choice.
 
-## 8.9 Conclusion
+## Conclusion
 
 PostgreSQL's stored procedures, introduced with the `CREATE PROCEDURE` command, are a significant addition to its server-side programming capabilities. They empower developers to encapsulate intricate business logic, manage data consistency through explicit transaction control, and enhance the performance and security of database operations.
 
